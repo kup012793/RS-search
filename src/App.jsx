@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import "./Readable.css";
-import qcScientist from "./assets/qc-scientist.png";
 
 const USP_API = "/api/usp";
 const EP_API = "/api/ep";
@@ -408,10 +407,6 @@ function App() {
             <p className="subheading">
               Search USP, BP, or EP to find the current lot or batch number.
             </p>
-          </div>
-          <div className="scientist-badge">
-            <span>QUALITY CONTROL</span>
-            <img src={qcScientist} alt="귀여운 QC 과학자 마스코트" />
           </div>
         </section>
         <section className="content-grid">
