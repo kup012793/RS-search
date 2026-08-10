@@ -18,6 +18,50 @@ function formatKrw(price, rates) {
   return `₩${Math.round(Number(match[1]) * rates[match[2].toUpperCase()]).toLocaleString("ko-KR")}`;
 }
 
+const USP_MONTHS = {
+  JAN: "01",
+  FEB: "02",
+  MAR: "03",
+  APR: "04",
+  MAY: "05",
+  JUN: "06",
+  JUL: "07",
+  AUG: "08",
+  SEP: "09",
+  OCT: "10",
+  NOV: "11",
+  DEC: "12",
+};
+
+function formatUspValidUseDate(value) {
+  const match = String(value || "")
+    .trim()
+    .match(/^(\d{1,2})-([A-Za-z]{3})-(\d{4})$/);
+  if (!match) return value || "";
+  const month = USP_MONTHS[match[2].toUpperCase()];
+  return month ? `${match[3]}.${month}.${match[1].padStart(2, "0")}` : value;
+}
+
+function uspLot(product) {
+  if (product.usp_current_lot_number) return product.usp_current_lot_number;
+
+  const latestLot = String(product.usp_lot_details || "")
+    .split("##")
+    .map((record) => {
+      const [lot, , , validUseDate] = record.split("|");
+      const timestamp = Date.parse(validUseDate || "");
+      return lot && validUseDate
+        ? { lot, validUseDate, timestamp: Number.isNaN(timestamp) ? 0 : timestamp }
+        : null;
+    })
+    .filter(Boolean)
+    .sort((a, b) => b.timestamp - a.timestamp)[0];
+
+  return latestLot
+    ? `${latestLot.lot} (${formatUspValidUseDate(latestLot.validUseDate)})`
+    : "Not published";
+}
+
 function mapUspProduct(product) {
   const price =
     product.salePrices?.defaultPriceGroup ??
@@ -33,7 +77,7 @@ function mapUspProduct(product) {
       product.x_casNumber ||
       "N/A",
     standard: "USP",
-    lot: product.usp_current_lot_number || "Not published",
+    lot: uspLot(product),
     quantity:
       product.x_packagingConfiguration ||
       (product.usp_packing_size && product.usp_uom
