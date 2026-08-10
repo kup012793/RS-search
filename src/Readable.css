@@ -1,0 +1,44 @@
+body { font-size: 17px; }
+.content-grid { grid-template-columns: minmax(0, 1fr); }
+.list-panel { width: 100%; }
+.brand { font-size: 16px; }
+.workspace-label, .eyebrow, .metric-label { font-size: 11px; }
+.page-heading .eyebrow { font-size: 14px; }
+.nav-item { font-size: 14px; }
+.sidebar-footer { font-size: 13px; }
+.sidebar-footer small { font-size: 11px; }
+.breadcrumb { font-size: 12px; }
+.page-heading h1 { font-size: 31px; letter-spacing: -.35px; }
+.subheading { font-size: 15px; }
+.search-box input { font-size: 14px; }
+.search-submit { font-size: 20px; }
+.filter { font-size: 12px; }
+.search-message { font-size: 12px; }
+.table-head { font-size: 12px; }
+.name-cell strong, .expiry-cell strong { font-size: 15px; }
+.name-link { font-size: 15px; }
+.name-cell small { font-size: 12px; }
+.lot-cell, .cas-cell { font-size: 14px; }
+.lot-cell { font-weight: 800; color: #294842; }
+.standard-row { padding-top: 18px; padding-bottom: 18px; }
+.table-head, .standard-row { grid-template-columns: minmax(180px, 1.8fr) .72fr .9fr 1.05fr .65fr .9fr .9fr; }
+.value-cell { font-size: 14px; color: #526762; }
+.value-cell small { display: block; margin-top: 3px; color: #70837d; font-size: 12px; }
+.detail-panel h2 { font-size: 27px; }
+.detail-code { font-size: 13px; }
+.detail-date strong { font-size: 27px; }
+.detail-date span, .detail-date small { font-size: 11px; }
+.detail-panel dt { font-size: 13px; }
+.detail-panel dd { font-size: 13px; }
+.empty-state { font-size: 14px; }
+.disclaimer { font-size: 12px; }
+.disclaimer strong { font-size: 11px; }
+@media (max-width: 620px) {
+  .page-heading h1 { font-size: 27px; }
+  .subheading { font-size: 14px; }
+  .name-cell strong, .name-link, .expiry-cell strong { font-size: 13px; }
+  .lot-cell, .cas-cell { font-size: 12px; }
+  .table-head { font-size: 10px; }
+  .table-head, .standard-row { grid-template-columns: 1.8fr .7fr .85fr 1fr .75fr .75fr; }
+  .table-head span:nth-child(6), .standard-row > span:nth-child(6) { display: none; }
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/api/usp/:path*",
+      "destination": "https://store.usp.org/ccstore/v1/:path*"
+    },
+    {
+      "source": "/api/ep/:path*",
+      "destination": "https://crs.edqm.eu/:path*"
+    },
+    {
+      "source": "/api/bp/:path*",
+      "destination": "https://www.pharmacopoeia.com/:path*"
+    },
+    {
+      "source": "/api/fx/:path*",
+      "destination": "https://api.frankfurter.app/:path*"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/index.html"
+    }
+  ]
+}
