@@ -254,19 +254,26 @@ function App() {
   }, []);
   const filteredStandards = useMemo(
     () =>
-      standards.filter((item) => {
-        if (liveSearch)
-          return liveSource === "all"
-            ? item.source?.endsWith("live")
-            : item.source === liveSource;
-    const matchesQuery = `${item.name} ${item.code} ${item.cas} ${item.lot}`
-          .toLowerCase()
-          .includes(query.toLowerCase());
-        return (
-          matchesQuery &&
-          (activeFilter === "All" || item.standard === activeFilter)
-        );
-      }),
+      standards
+        .filter((item) => {
+          if (liveSearch)
+            return liveSource === "all"
+              ? item.source?.endsWith("live")
+              : item.source === liveSource;
+          const matchesQuery = `${item.name} ${item.code} ${item.cas} ${item.lot}`
+            .toLowerCase()
+            .includes(query.toLowerCase());
+          return (
+            matchesQuery &&
+            (activeFilter === "All" || item.standard === activeFilter)
+          );
+        })
+        .sort((a, b) =>
+          a.name.localeCompare(b.name, "en", {
+            sensitivity: "base",
+            numeric: true,
+          }),
+        ),
     [activeFilter, liveSearch, liveSource, query, standards],
   );
 
