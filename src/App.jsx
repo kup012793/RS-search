@@ -13,9 +13,26 @@ function officialUrl(origin, path, fallbackQuery) {
 }
 
 function formatKrw(price, rates) {
-  const match = String(price || "").match(/([0-9]+(?:\.[0-9]+)?)\s*(USD|EUR)/i);
-  if (!match || !rates[match[2].toUpperCase()]) return "KRW N/A";
-  return `₩${Math.round(Number(match[1]) * rates[match[2].toUpperCase()]).toLocaleString("ko-KR")}`;
+  const priceText = String(price || "").trim();
+  const currencyFirst = priceText.match(
+    /(USD|EUR|GBP|[$€£])\s*([0-9][0-9,.]*)/i,
+  );
+  const amountFirst = priceText.match(
+    /([0-9][0-9,.]*)\s*(USD|EUR|GBP|[$€£])/i,
+  );
+  const currencyToken = currencyFirst?.[1] || amountFirst?.[2];
+  const amountText = currencyFirst?.[2] || amountFirst?.[1];
+
+  if (!currencyToken || !amountText) return "KRW N/A";
+
+  const currency =
+    { $: "USD", "€": "EUR", "£": "GBP" }[currencyToken] ||
+    currencyToken.toUpperCase();
+  const amount = Number(amountText.replaceAll(",", ""));
+  const rate = rates[currency];
+
+  if (!Number.isFinite(amount) || !rate) return "KRW N/A";
+  return `₩${Math.round(amount * rate).toLocaleString("ko-KR")}`;
 }
 
 const USP_MONTHS = {
@@ -235,22 +252,28 @@ function App() {
   const [liveSource, setLiveSource] = useState("USP Store live");
   const [isSearching, setIsSearching] = useState(false);
   const [searchMessage, setSearchMessage] = useState("");
-  const [rates, setRates] = useState({ USD: null, EUR: null });
+  const [rates, setRates] = useState({ USD: null, EUR: null, GBP: null });
   useEffect(() => {
     Promise.all([
       fetch(`${FX_API}/latest?from=USD&to=KRW`),
       fetch(`${FX_API}/latest?from=EUR&to=KRW`),
+      fetch(`${FX_API}/latest?from=GBP&to=KRW`),
     ])
-      .then(async ([usdResponse, eurResponse]) => {
-        if (!usdResponse.ok || !eurResponse.ok)
+      .then(async ([usdResponse, eurResponse, gbpResponse]) => {
+        if (!usdResponse.ok || !eurResponse.ok || !gbpResponse.ok)
           throw new Error("Exchange rates unavailable");
-        const [usd, eur] = await Promise.all([
+        const [usd, eur, gbp] = await Promise.all([
           usdResponse.json(),
           eurResponse.json(),
+          gbpResponse.json(),
         ]);
-        setRates({ USD: usd.rates?.KRW || null, EUR: eur.rates?.KRW || null });
+        setRates({
+          USD: usd.rates?.KRW || null,
+          EUR: eur.rates?.KRW || null,
+          GBP: gbp.rates?.KRW || null,
+        });
       })
-      .catch(() => setRates({ USD: null, EUR: null }));
+      .catch(() => setRates({ USD: null, EUR: null, GBP: null }));
   }, []);
   const filteredStandards = useMemo(
     () =>
